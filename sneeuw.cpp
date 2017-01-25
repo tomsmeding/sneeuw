@@ -112,17 +112,21 @@ public:
 };
 
 int main(int argc,char **argv){
-	int W,H;
-	/*if(argc==3){
-		W=strtol(argv[1],NULL,10);
-		H=strtol(argv[2],NULL,10);
-	} else {*/
-		W=strtol(gettput("cols").data(),NULL,10);
-		H=strtol(gettput("lines").data(),NULL,10);
-	/*}*/
+	int W=strtol(gettput("cols").data(),NULL,10);
+	int H=strtol(gettput("lines").data(),NULL,10);
+	int fps=10;
 	bool infinite=false;
-	if(argc==2&&strcmp(argv[1],"inf")==0){
-		infinite=true;
+	int ch;
+	while((ch=getopt(argc,argv,"iw:h:f:"))!=-1){
+		switch(ch){
+			case 'i': infinite=true; break;
+			case 'w': W=strtol(optarg,NULL,10); break;
+			case 'h': H=strtol(optarg,NULL,10); break;
+			case 'f': fps=strtol(optarg,NULL,10); break;
+			case '?':
+				cerr<<"Usage: "<<argv[0]<<" [-i] [-w <width>] [-h <height>] [-f <fps>]"<<endl;
+				return 1;
+		}
 	}
 	State state(W,H);
 	if(!infinite)state.genpart(W*H/20);
@@ -134,6 +138,6 @@ int main(int argc,char **argv){
 		state.render();
 		//state.border();
 		state.print();
-		usleep(100000);
+		usleep(1000000/fps);
 	}
 }
